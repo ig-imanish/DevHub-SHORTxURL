@@ -14,8 +14,8 @@ public class ShorterApplication {
 		SpringApplication.run(ShorterApplication.class, args);
 
 		Date date = new Date();
-		System.out.println(date);
-		 
+		System.out.println("Current Date: " + date);
+
 	}
 
 }

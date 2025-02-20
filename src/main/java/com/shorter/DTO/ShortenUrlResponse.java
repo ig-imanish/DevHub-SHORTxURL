@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ShortenUrlResponse {
+    private boolean success;
     private String id;
     private String originalUrl;
     private String shortUrl;

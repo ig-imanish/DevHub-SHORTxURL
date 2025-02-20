@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Short URL Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: darkblue;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Short URL Service</h1>
+        <input type="text" id="username" placeholder="Enter your username">
+        <button onclick="authenticateUser()">Login</button>
+        <div id="authStatus"></div>
+
+        <input type="text" id="originalUrl" placeholder="Enter URL to shorten">
+        <input type="text" id="customName" placeholder="Custom short name (optional)">
+        <button onclick="shortenUrl()">Shorten</button>
+        <div id="shortUrlResult"></div>
+    </div>
+
+    <script>
+        async function authenticateUser() {
+            const username = document.getElementById("username").value;
+            if (!username) {
+                alert("Enter username");
+                return;
+            }
+
+            const response = await fetch(`/api/v1/auth/${username}`);
+            const isAuthenticated = await response.json();
+
+            document.getElementById("authStatus").innerText = isAuthenticated ? "Authenticated!" : "Not Authenticated";
+        }
+
+        async function shortenUrl() {
+            const originalUrl = document.getElementById("originalUrl").value;
+            const customName = document.getElementById("customName").value;
+
+            if (!originalUrl) {
+                alert("Enter a valid URL");
+                return;
+            }
+
+            const requestBody = {
+                originalUrl: originalUrl,
+                customName: customName || null
+            };
+
+            const response = await fetch("/api/v1/shorten", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestBody)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                document.getElementById("shortUrlResult").innerHTML = `Short URL: <a href="/api/v1/${result.shortUrl}" target="_blank">${result.shortUrl}</a>`;
+            } else {
+                alert(result.message);
+            }
+        }
+
+    </script>
+</body>
+
+</html>
