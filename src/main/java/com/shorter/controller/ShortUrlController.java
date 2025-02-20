@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shorter.DTO.ShortenUrlRequest;
 import com.shorter.DTO.ShortenUrlResponse;
+import com.shorter.model.ShortUrl;
 import com.shorter.service.AuthService;
 import com.shorter.service.ShortUrlService;
 
 import lombok.AllArgsConstructor;
-
 
 @AllArgsConstructor
 @RestController
@@ -30,7 +30,8 @@ public class ShortUrlController {
     private final AuthService authService;
 
     @PostMapping("/shorten")
-    public ResponseEntity<?> shortenUrl(@RequestBody ShortenUrlRequest request, @RequestHeader("username") String username) {
+    public ResponseEntity<?> shortenUrl(@RequestBody ShortenUrlRequest request,
+            @RequestHeader("username") String username) {
 
         System.out.println(request);
         if (!authService.isUserAuthenticated(username)) {
@@ -40,23 +41,24 @@ public class ShortUrlController {
         if (originalUrl.isEmpty()) {
             return ResponseEntity.badRequest().body("Original URL cannot be empty");
         }
-        
+
         if (request.getCustomName() != null && !request.getCustomName().trim().isEmpty()) {
             String customName = request.getCustomName().trim();
             if (customName.length() > 10) {
                 return ResponseEntity.badRequest().body("Custom name must be less than 10 characters");
             }
         }
-        
-        String shortUrl = shortUrlService.createShortUrl(originalUrl, request.getCustomName(), username);
+
+        ShortUrl shortUrl = shortUrlService.createShortUrl(originalUrl, request.getCustomName(), username);
         if (shortUrl == null) {
             return ResponseEntity.badRequest().body("Custom name already taken");
         }
-        return ResponseEntity.ok(new ShortenUrlResponse(shortUrl));
+        return ResponseEntity.ok(new ShortenUrlResponse(shortUrl.getId(), shortUrl.getOriginalUrl(),
+                shortUrl.getShortUrl(), shortUrl.getUsername(), shortUrl.getCreatedAt(), shortUrl.getExpirationTime()));
     }
 
     @GetMapping("/{shortUrl}")
-    public ResponseEntity<Object> redirectToOriginal(@PathVariable String shortUrl ) {
+    public ResponseEntity<Object> redirectToOriginal(@PathVariable String shortUrl) {
         Optional<String> originalUrl = shortUrlService.getOriginalUrl(shortUrl);
         return originalUrl.map(url -> ResponseEntity.status(302).location(URI.create(url)).build())
                 .orElse(ResponseEntity.notFound().build());

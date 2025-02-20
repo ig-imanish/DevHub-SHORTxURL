@@ -17,33 +17,35 @@ public class ShortUrlService {
         this.repository = repository;
     }
 
-    public String createShortUrl(String originalUrl, String customName, String username) {
+    public ShortUrl createShortUrl(String originalUrl, String customName, String username) {
         if (customName == null || customName.isEmpty()) {
             customName = generateRandomString();
         } else if (repository.existsByShortUrl(customName)) {
             return null; // Custom name already taken
         }
-        
+
         Date currentTime = new Date();
         Date expirationTime = new Date(currentTime.getTime() + (1 * 60 * 1000)); // Current time + 5 minutes
-        
-        repository.save(new ShortUrl(null, originalUrl, customName, username, currentTime, expirationTime));
-        return customName;
+
+        ShortUrl shortUrl = repository
+                .save(new ShortUrl(null, originalUrl, customName, username, currentTime, expirationTime));
+
+        return shortUrl;
     }
 
     public Optional<String> getOriginalUrl(String shortUrl) {
         Date currentTime = new Date();
         Optional<ShortUrl> url = repository.findByShortUrl(shortUrl);
-        
+
         if (url.isPresent() && url.get().getExpirationTime().before(currentTime)) {
             repository.deleteByShortUrl(shortUrl);
             return Optional.empty();
         }
-        
+
         return url.map(ShortUrl::getOriginalUrl);
     }
     // public Optional<String> getOriginalUrl(String shortUrl) {
-    //     return repository.findByShortUrl(shortUrl).map(ShortUrl::getOriginalUrl);
+    // return repository.findByShortUrl(shortUrl).map(ShortUrl::getOriginalUrl);
     // }
 
     private String generateRandomString() {
@@ -65,4 +67,3 @@ public class ShortUrlService {
         return false;
     }
 }
-
