@@ -1,5 +1,6 @@
 package com.shorter.controller;
 
+import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,10 +8,10 @@ import java.util.Date;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,17 +31,18 @@ public class ShortUrlController {
     private final ShortUrlService shortUrlService;
     private final AuthService authService;
 
-    @PostMapping("/shorten")
-    public ResponseEntity<?> shortenUrl(@RequestBody ShortenUrlRequest request,
-            @RequestHeader("username") String username) {
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok("Hello World");
+    }
 
-        System.out.println(request);
-        if (!authService.isUserAuthenticated(username)) {
-            // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(username + " is
-            // Unauthorized");
+    @PostMapping("/shorten")
+    public ResponseEntity<?> shortenUrl(@RequestBody ShortenUrlRequest request, Principal principal) {
+        if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ShortenUrlError(false, username + " is UNAUTHORIZED", new Date()));
+                    .body(new ShortenUrlError(false, "Unauthorized", new Date()));
         }
+        String username = principal.getName();
         String originalUrl = request.getOriginalUrl().trim();
         if (originalUrl.isEmpty()) {
             // return ResponseEntity.badRequest().body("Original URL cannot be empty");
@@ -93,10 +95,10 @@ public class ShortUrlController {
     }
 
     @DeleteMapping("/delete/{shortUrl}")
-    public ResponseEntity<?> deleteShortUrl(@PathVariable String shortUrl, @RequestHeader("username") String username) {
-        if (!authService.isUserAuthenticated(username)) {
+    public ResponseEntity<?> deleteShortUrl(@PathVariable String shortUrl, Principal principal) {
+        if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ShortenUrlError(false, username + " is UNAUTHORIZED", new Date()));
+                    .body(new ShortenUrlError(false, "Unauthorized", new Date()));
         }
         if (shortUrl.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

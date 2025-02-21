@@ -24,6 +24,7 @@ public class UrlCleanupScheduler {
         List<ShortUrl> expiredUrls = repository.findByExpirationTimeBefore(currentTime);
         int count = expiredUrls.size();
         expiredUrls.forEach(url -> System.out.println(url));
-        System.out.println("Expired URLs cleaned up " + count);
+        Date date = new Date();
+        System.out.println("Expired URLs cleaned up " + count + " at " + date);
     }
 }
