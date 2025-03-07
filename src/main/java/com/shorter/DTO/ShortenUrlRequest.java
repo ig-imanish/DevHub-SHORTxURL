@@ -11,4 +11,6 @@ public class ShortenUrlRequest {
     private String originalUrl;
     private String customName;
     private String expirationTime;
+    private String password;
+    private String referer;
 }

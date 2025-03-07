@@ -3,7 +3,7 @@ package com.shorter.service;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.shorter.model.ShortUrl;
+import com.shorter.models.ShortUrl;
 import com.shorter.repo.ShortUrlRepository;
 import java.util.Date;
 import java.util.List;

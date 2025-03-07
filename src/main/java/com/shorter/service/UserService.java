@@ -2,18 +2,11 @@ package com.shorter.service;
 
 import java.util.List;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.shorter.models.Role;
 import com.shorter.models.RoleName;
 import com.shorter.models.User;
-
-import org.springframework.web.client.RestClientException;
 
 @Service
 public class UserService {
@@ -47,6 +40,18 @@ public class UserService {
     // }
     // }
 
+    public User findByUsername(String username) {
+        User user = new User("admin@gmail.com", "admin", List.of(new Role(RoleName.ADMIN)));
+        user.setPremium(true);
+        return user;
+    }
+
+    public User findByEmailOrUsername(String emailOrUsername) {
+        User user = new User("admin@gmail.com", "admin", List.of(new Role(RoleName.ADMIN)));
+        user.setPremium(true);
+        return user;
+    }
+
     public User findByEmail(String email) {
         User user = new User("admin@gmail.com", "admin", List.of(new Role(RoleName.ADMIN)));
 
@@ -64,6 +69,10 @@ public class UserService {
         // throw new RuntimeException("Failed to fetch user by email: " +
         // e.getMessage());
         // }
+    }
+
+    public boolean isUserPremium(String userId) {
+        return true;
     }
 
 }

@@ -29,8 +29,9 @@ public class User implements UserDetails {
     String lastName;
     String email;
     String password;
-
     List<Role> roles;
+
+    private boolean isPremium;
 
     public User(String email, String password, List<Role> roles) {
         this.email = email;
