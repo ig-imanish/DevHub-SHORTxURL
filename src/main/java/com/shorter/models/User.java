@@ -28,14 +28,12 @@ public class User implements UserDetails {
     String firstName;
     String lastName;
     String email;
-    String password;
     List<Role> roles;
 
     private boolean isPremium;
 
-    public User(String email, String password, List<Role> roles) {
+    public User(String email, List<Role> roles) {
         this.email = email;
-        this.password = password;
         this.roles = roles;
     }
 
@@ -69,5 +67,10 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
     }
 }

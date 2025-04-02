@@ -31,9 +31,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = jwtUtilities.getToken(request);
 
-        if (token != null && jwtUtilities.validateToken(token)) {
-            String email = jwtUtilities.extractUsername(token);
+        String email = jwtUtilities.validateTokenWithApi(token);
+        // Check if the token is present and valid
 
+        if (token != null && email != null) {
+            
             UserDetails userDetails = customerUserDetailsService.loadUserByUsername(email);
             if (userDetails != null) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -43,6 +45,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             }
         }
+
+        // if (token != null && jwtUtilities.validateToken(token)) {
+        //     String email = jwtUtilities.extractUsername(token);
+
+        //     UserDetails userDetails = customerUserDetailsService.loadUserByUsername(email);
+        //     if (userDetails != null) {
+        //         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+        //                 userDetails.getUsername(), null, userDetails.getAuthorities());
+        //         log.info("authenticated user with email :{}", email);
+        //         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        //     }
+        // }
         filterChain.doFilter(request, response);
     }
 

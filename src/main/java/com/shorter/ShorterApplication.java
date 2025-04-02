@@ -25,7 +25,7 @@ public class ShorterApplication {
 		Date date = new Date();
 		System.out.println("Current Date: " + date);
 
-		String token = jwtUtilities.generateToken("admin@gmail.com", List.of("ADMIN"));
-		System.out.println("Token: " + token);
+		// String token = jwtUtilities.generateToken("admin@gmail.com", List.of("ADMIN"));
+		// System.out.println("Token: " + token);
 	}
 }

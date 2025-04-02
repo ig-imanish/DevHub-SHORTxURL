@@ -62,7 +62,7 @@ public class ShortUrlController {
         return ResponseEntity.ok(shortUrls);
     }
 
-    @GetMapping("/shorten/user")
+    @GetMapping("/shorten/me")
     public ResponseEntity<?> getUrlByAuthUser(Principal principal) {
         String username = principal.getName();
         List<ShortUrl> shortUrls = shortUrlRepository.findByUsername(username);
