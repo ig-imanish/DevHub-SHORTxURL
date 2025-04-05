@@ -1,31 +1,33 @@
 package com.shorter;
 
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import com.shorter.security.JwtUtilities;
+import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
 @EnableScheduling
 public class ShorterApplication {
 
-	private static JwtUtilities jwtUtilities;
-
-	public ShorterApplication(JwtUtilities jwtUtilities) {
-		ShorterApplication.jwtUtilities = jwtUtilities;
-	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(ShorterApplication.class, args);
-
+		
+		 // Load environment variables from .env file BEFORE Spring starts
+		 try {
+            Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+            dotenv.entries().forEach(e -> {
+                System.setProperty(e.getKey(), e.getValue());
+                System.out.println("Loaded env var: " + e.getKey());
+            });
+        } catch (Exception e) {
+            System.err.println("Warning: Failed to load .env file. " + e.getMessage());
+        }
+        
 		Date date = new Date();
 		System.out.println("Current Date: " + date);
-
-		// String token = jwtUtilities.generateToken("admin@gmail.com", List.of("ADMIN"));
-		// System.out.println("Token: " + token);
 	}
 }
